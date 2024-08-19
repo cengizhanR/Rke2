@@ -1,0 +1,11 @@
+cat << EOF >> /etc/rancher/rke2/config.yaml
+server: https://rancher.exemple.com:9345
+token: fuzzybunnyslippers
+write-kubeconfig-mode: 0600
+kube-apiserver-arg:
+- authorization-mode=RBAC,Node
+kubelet-arg:
+- protect-kernel-defaults=true
+- read-only-port=0
+- authorization-mode=Webhook
+EOF

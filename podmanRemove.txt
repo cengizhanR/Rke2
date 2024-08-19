@@ -1,0 +1,12 @@
+Complete Uninstall
+Run the following commands:
+
+rm -rf /etc/containers/* /var/lib/containers/* /etc/docker /etc/subuid* /etc/subgid*
+yum remove buildah skopeo podman containers-common atomic-registries docker
+
+Remember to delete any users and their associated containers storage:
+
+rm -rf /home/fatherlinux/.local/share/containers/
+
+Or:
+userdel -r fatherlinux

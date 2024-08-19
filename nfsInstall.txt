@@ -1,0 +1,14 @@
+###NFS Install
+
+sudo apt update
+sudo apt install nfs-kernel-server
+systemctl start nfs-server
+systemctl enable nfs-server
+sudo mkdir -p /mnt/nfs_share
+sudo chown nobody:nogroup /mnt/nfs_share
+sudo chmod 755 /mnt/nfs_share
+sudo nano /etc/exports
+/mnt/nfs_share    *(rw,sync,no_subtree_check)
+sudo exportfs -a
+sudo systemctl restart nfs-kernel-server
+sudo systemctl enable nfs-kernel-server

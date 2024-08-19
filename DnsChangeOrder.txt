@@ -1,0 +1,4 @@
+nmcli connection show
+sudo nmcli connection modify eth0 ipv4.dns "10.0.0.10,192.168.8.100"
+sudo nmcli connection modify Eth1 ipv4.dns "10.0.0.10,192.168.8.100"
+sudo systemctl restart NetworkManager

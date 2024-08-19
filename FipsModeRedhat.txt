@@ -1,0 +1,4 @@
+fips-mode-setup --enable
+reboot
+fips-mode-setup --check
+cat /proc/sys/crypto/fips_enabled(If the file contains 1, RHEL core cryptographic components switch to mode, in which they use only FIPS-approved implementations of cryptographic algorithms. If /proc/sys/crypto/fips_enabled contains 0, the cryptographic components do not enable their FIPS mode.)

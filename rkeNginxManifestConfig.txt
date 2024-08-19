@@ -1,0 +1,29 @@
+cat <<EOF > /var/lib/rancher/rke2/server/manifests/rke2-ingress-nginx-config.yaml
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: rke2-ingress-nginx
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    controller:
+      metrics:
+        enabled: true
+        serviceMonitor:
+          enabled: true
+      service:
+        enabled: true
+        annotations:
+          prometheus.io/scrape: "true"
+          prometheus.io/port: "10254"
+		  prometheus.io/path: "/metrics"
+      config:
+        use-forwarded-headers: "true"
+	allow-snippet-annotations: "true"
+        allowSnippetAnnotations: "true"
+        proxy-buffer-size: "256k"
+        proxy-buffer-number: "4"
+        large-client-header-buffers: "4 16k"
+        enable-ssl-passthrough: "true"
+EOF
+

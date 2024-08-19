@@ -1,0 +1,13 @@
+kubectl create namespace cert-manager
+kubectl apply --validate=false -f cert-manager.crds.yaml
+helm install cert-manager ./cert-manager-v1.14.3.tgz     --namespace cert-manager     --set image.repository=200.10.10.5:5000/quay.io/jetstack/cert-manager-controller     --set webhook.image.repository=200.10.10.5:5000/quay.io/jetstack/cert-manager-webhook     --set cainjector.image.repository=200.10.10.5:5000/quay.io/jetstack/cert-manager-cainjector     --set startupapicheck.image.repository=200.10.10.5:5000/quay.io/jetstack/cert-manager-startupapicheck
+
+kubectl create namespace cattle-system
+helm install rancher ./rancher-2.8.4.tgz \
+    --namespace cattle-system \
+    --set hostname=rancher.rancher.exemple.com \
+    --set certmanager.version=1.14.5 \
+    --set rancherImage=10.0.0.10:5000/rancher/rancher \
+    --set systemDefaultRegistry=10.0.0.10:5000 \
+    --set useBundledSystemChart=true 
+ 

@@ -1,0 +1,75 @@
+kubelet garbage conf 
+secrets-encryption: true
+token: fuzzybunnyslippers
+tls-san:
+  - rancher.exemple.com
+node-ip: "10.0.0.2"
+write-kubeconfig-mode: 0600
+etcd-expose-metrics: true
+use-service-account-credentials: true
+kube-controller-manager-arg:
+- bind-address=127.0.0.1
+- use-service-account-credentials=true
+- tls-min-version=VersionTLS12
+- tls-cipher-suites=TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+kube-scheduler-arg:
+- tls-min-version=VersionTLS12
+- tls-cipher-suites=TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+kube-apiserver-arg:
+- tls-min-version=VersionTLS12
+- tls-cipher-suites=TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+- authorization-mode=RBAC,Node
+- anonymous-auth=false
+- audit-policy-file=/etc/rancher/rke2/audit-policy.yaml
+- audit-log-mode=blocking-strict
+- audit-log-maxage=30
+- audit-log-path=/var/lib/rancher/rke2/server/logs/audit.log
+kubelet-arg:
+- protect-kernel-defaults=true
+- read-only-port=0
+- authorization-mode=Webhook
+- streaming-connection-idle-timeout=5m
+- minimum-container-ttl-duration=10s
+- maximum-dead-containers-per-container=2
+- maximum-dead-containers=240
+- image-gc-high-threshold=85
+- image-gc-low-threshold=80
+
+
+
+protect-kernel-defaults=true
+
+Description: Ensures kubelet does not alter certain kernel settings required for system stability and security.
+Potential Impact: This is generally a safe setting. It prevents accidental or malicious changes to critical kernel parameters. Unless your workloads require specific kernel tweaks, this should not cause harm.
+read-only-port=0
+
+Description: Disables the read-only port (default is 10255), which exposes the kubelet’s metrics and debugging endpoints.
+Potential Impact: Improves security by preventing unauthorized access to kubelet endpoints. If monitoring tools rely on the read-only port, ensure they are updated to use secure endpoints. Typically, this is a safe and recommended setting.
+authorization-mode=Webhook
+
+Description: Uses the webhook mode for kubelet authorization, allowing external services to handle authorization.
+Potential Impact: Adds flexibility and integrates with RBAC systems. Ensure your webhook service is highly available and performant, as any issues with the webhook can affect node operations.
+streaming-connection-idle-timeout=5m
+
+Description: Sets the idle timeout for streaming connections like kubectl exec and kubectl logs.
+Potential Impact: Closes idle connections after 5 minutes. This helps free resources but could impact long-running debugging sessions. Adjust the timeout based on your operational needs.
+minimum-container-ttl-duration=10s
+
+Description: Specifies the minimum time a container will be retained before being eligible for garbage collection.
+Potential Impact: Ensures short-lived containers are not immediately removed. Generally safe, but very short-lived containers might be cleaned up quickly if the duration is too short. Adjust based on your container lifecycle.
+maximum-dead-containers-per-container=2
+
+Description: Limits the number of dead containers retained per container.
+Potential Impact: Helps manage disk space by limiting old container data. Too low a value might hinder debugging efforts for failed containers. Adjust based on the balance between disk usage and debugging needs.
+maximum-dead-containers=240
+
+Description: Sets the maximum number of dead containers to retain globally.
+Potential Impact: Controls total disk usage for dead containers. Ensure the value fits your node capacity and debugging requirements.
+image-gc-high-threshold=85
+
+Description: Triggers image garbage collection when disk usage exceeds this percentage.
+Potential Impact: Helps prevent disk space exhaustion. Ensure critical images are not removed prematurely by managing image retention policies effectively.
+image-gc-low-threshold=80
+
+Description: Target disk usage after image garbage collection.
+Potential Impact: Provides a buffer for disk usage, preventing frequent GC cycles. Generally safe, but ensure your workloads can tolerate image removal.
